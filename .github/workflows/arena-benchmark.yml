@@ -1,0 +1,36 @@
+name: Bangsaen Active Defense Arena Benchmark
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  arena-validation:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install fastapi uvicorn requests
+
+    - name: Test Attack Scenario 1 (Unauthorized Access - Expect Termination)
+      run: |
+        python tests/test_arena_probe.py
+      continue-on-error: true
+
+    - name: Test Attack Scenario 2 (Authorized Auditor Access - Expect Payload)
+      env:
+        BANGSAEN_GCP_AUTH_BEARER: "BSH_GCP_LIVE_TOKEN_2026"
+      run: |
+        python builder/audit_extractor.py

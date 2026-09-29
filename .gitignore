@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C/C++ Build Artifacts & Temporary Directories
+build/
+temp.*/
+*.obj
+*.o
+*.lib
+*.exp
+
+# Raw Data Source & Forensic Dump Logs (Zero-Data Leakage)
+data_source/
+audit_record_dump_*.json
+
+# Environment & Secret Configurations
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# IDE / Editor Specific Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Specific Files
+.DS_Store
+Thumbs.db
