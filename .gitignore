@@ -1,40 +1,22 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*$py.class
 
-# C/C++ Build Artifacts & Temporary Directories
+# Keep C-Source Code & Internal Build Scripts Secret
+core/
+builder/build_pyd.py
+builder/cloud_kms_server.py
+data_source/
+setup.py
+Dockerfile
+CMakeLists.txt
 build/
 temp.*/
-*.obj
-*.o
-*.lib
-*.exp
 
-# Ignore generated dynamic headers (Protect raw structures)
-core/include/generated_vip_data.h
-
-# Explicitly ALLOW pre-built binaries in releases folder for Arena testing
-*.pyd
-!releases/*.pyd
-
-# Raw Data Source & Forensic Dump Logs (Zero-Data Leakage)
-data_source/
+# Temporary dump logs
 audit_record_dump_*.json
 
-# Environment & Secret Configurations
-.env
-.venv/
-env/
-venv/
-ENV/
-
-# IDE / Editor Specific Files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS Specific Files
-.DS_Store
-Thumbs.db
+# Explicitly ALLOW pre-built binaries and test scripts
+!releases/active_defense_v27.pyd
+!builder/audit_extractor.py
+!tests/test_arena_probe.py
