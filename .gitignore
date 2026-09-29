@@ -11,6 +11,13 @@ temp.*/
 *.lib
 *.exp
 
+# Ignore generated dynamic headers (Protect raw structures)
+core/include/generated_vip_data.h
+
+# Explicitly ALLOW pre-built binaries in releases folder for Arena testing
+*.pyd
+!releases/*.pyd
+
 # Raw Data Source & Forensic Dump Logs (Zero-Data Leakage)
 data_source/
 audit_record_dump_*.json
