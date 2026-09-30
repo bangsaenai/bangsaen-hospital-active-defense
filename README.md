@@ -1,54 +1,117 @@
-# 🌊 Bangsaen Sovereign Active Defense (EP.27)
-> **C-Native Living Container with Null-Space Memory Shredder & GCP Cloud KMS**
+# Bangsaen AI Labs EP.27: "ป้อมปราการ Active Defense" ที่ถอดได้จากไฟล์ที่เขาแจกเอง โดยไม่ต้องมีกุญแจ
 
-Welcome to the **Bangsaen AI Labs - Sovereign Active Defense Arena**. This repository demonstrates an enterprise-grade defense-in-depth architecture designed for critical medical records (Project X).
+**โจทย์:** [`bangsaenai/bangsaen-hospital-active-defense`](https://github.com/bangsaenai/bangsaen-hospital-active-defense) หรือ "EP.27 Sovereign Active Defense Arena — Living C-Native Container with Null-Space Memory Shredder & GCP Cloud KMS"
+**โพสต์โปรโมตของเขา:** โพสต์โปรโมต EP.27 บน Facebook
 
----
+## สรุปสั้นๆ 
 
-## 🎯 The Arena Rules & Challenge
+EP.25 มีรหัสที่เป็นไปได้ 256 แบบ EP.26 มี 16.7 ล้านแบบ คราวนี้เขายกระดับลงไปอีกขั้น: **EP.27 ไม่มีบิตของกุญแจให้เดาเลยสักบิตเดียว**
 
-### 🔒 The Concept
-Unlike traditional static obfuscation, `active_defense_v27.pyd` is a **Living C-Native Container**. Data inside the container is dynamically encrypted at compile-time using a **Time-Varying Chaos Matrix**. 
+ข้อมูลคนไข้ VIP ทั้งก้อน ถูก "เข้ารหัส" ด้วยการ XOR ทีละไบต์กับเลขชุดหนึ่งที่ขึ้นกับ **ตำแหน่งของไบต์** เพียงอย่างเดียว คือ `(ลำดับไบต์ × 17 + 0x5A) % 256` เลขชุดนี้ไม่รับอะไรที่เป็นความลับเข้ามาเลย ไม่มีกุญแจ ไม่มี token ไม่มีข้อมูลจากเครื่อง ไม่มีอะไรจากเน็ต ทุกคนบนโลกคำนวณเลขชุดเดียวกันเป๊ะ
 
-When executed:
-1. The C-Core issues a WinHTTP HTTPS handshake to **Google Cloud Run KMS**.
-2. **If Authorized:** Decrypts VIP Patient Payload into temporary Heap RAM and returns a clean JSON.
-3. **If Unauthorized:** Triggers **Null-Space Memory Shredding (`SecureZeroMemory`)** in **< 0.12 ms**, zeroing all volatile memory buffers (`0x00`) and instantly killing the OS process context.
+เราถอดข้อมูลคนไข้ VIP ทั้งก้อน (JSON ขนาด 2,204 ไบต์) ออกมาได้ครบ **จากไฟล์ `.pyd` ที่เขาแจกในรีลีสของเขาเอง** โดยไม่ต้องใช้ Windows ไม่ต้องใช้ token ไม่ต้องต่อเน็ตหา GCP ไม่ต้องรันไฟล์ และไม่ต้องแข่งกับ "Thanos Shredder < 0.12 ms" ที่เขาโม้ไว้ทั้งโพสต์ สิ่งเดียวที่เราสมมติคือ "ข้อมูลข้างในเป็น JSON" แค่นั้นก็พอ
 
----
+ทั้งโพสต์ Facebook พูดถึง "ป้อมปราการ", "Insurance Policy", "Enterprise-Grade Sovereign Security Framework ที่พร้อมใช้กับโรงพยาบาลชั้นสูงทันที" ความจริงคือมันคือสลักไม้ที่เขียนคำว่า "เหล็กกล้า" ไว้ข้างๆ
 
-## 🔑 Public Master Credentials (Proof of Authenticity)
+## อธิบายแบบให้เห็นภาพ
 
-To maintain 100% transparency and prove that valid data exists inside the binary, the official **Master Bearer Token** is publicly disclosed below:
+การเข้ารหัสที่แท้จริง = ล็อกของด้วย **กุญแจที่มีแค่คุณรู้** ต่อให้คนอื่นเห็นทุกอย่าง มีเครื่องเหมือนกัน รู้วิธีทำงานทุกขั้นตอน ก็เปิดไม่ได้ถ้าไม่มีกุญแจ นี่คือหลักการที่วงการเข้ารหัสยึดมาตั้งแต่ปี 1883 (Kerckhoffs's principle): **ความปลอดภัยต้องอยู่ที่กุญแจ ห้ามอยู่ที่การปิดบังวิธีการ**
 
-```text
-BANGSAEN_GCP_AUTH_BEARER = "BSH_GCP_LIVE_TOKEN_2026"  
+EP.27 ทำตรงข้าม: เอาข้อความไปสลับตาม **สูตรคงที่ที่ขึ้นกับตำแหน่งอย่างเดียว** ไม่มีกุญแจในสมการเลย แล้วพยายามรักษาความลับด้วยการ "ซ่อนวิธีการ" (ปิดซอร์ส แจกแต่ binary) ซึ่งเป็นสิ่งเดียวที่ห้ามพึ่ง
+
+มันเหมือนคุณเขียนจดหมายลับด้วยกฎ "ตัวแรกเลื่อน 1, ตัวสองเลื่อน 2..." แล้วคิดว่าปลอดภัยเพราะไม่บอกใครว่าใช้กฎนี้ พอมีคนหยิบจดหมายสองสามฉบับมาเทียบ กฎก็โผล่มาเอง เพราะกฎมันสม่ำเสมอเกินไป
+
+## เจาะได้ยังไง 
+
+### เส้นทางที่ 1: เดาว่าเป็น JSON แล้วให้สูตรมันโผล่มาเอง (crib-drag)
+
+นี่คือวิธีที่คลาสสิกที่สุดในตำราเข้ารหัส และใช้ได้แม้เราจะมี **แค่ไฟล์ binary กับสมมติฐานเดียวว่า "ข้อมูลข้างในเป็น JSON"**
+
+1. ดึงก้อนข้อมูลที่เข้ารหัส (2,204 ไบต์) ออกมาจากไฟล์ `active_defense_v27.pyd` ที่เขาแจก มันฝังอยู่ในนั้นตรงๆ (ที่ offset 6656)
+2. JSON ทุกก้อนขึ้นต้นเหมือนกัน เดา 6 ตัวแรกว่าเป็น `{\r\n  "`
+3. เอา 6 ตัวที่เดา ไป XOR กับ 6 ไบต์แรกของข้อมูลที่เข้ารหัส → ได้ "เลขชุด" (keystream) กลับมา: `0x5a, 0x6b, 0x7c, 0x8d, 0x9e, 0xaf`
+4. สังเกตว่าเลขชุดนี้ **เพิ่มทีละ +17 ทุกไบต์** เป๊ะ ๆ
+
+เลขชุดที่ไต่ขึ้นเป็นเส้นตรงแบบนี้ ไม่มีความสุ่ม ไม่แปรผันตามข้อความ **คือลายเซ็นของการเข้ารหัสที่ไม่มีกุญแจ** เมื่อรู้ว่าเลขชุดคือ `เริ่มที่ 0x5A แล้ว +17 ไปเรื่อยๆ` เราก็ต่อสูตรออกไปครอบทั้ง 2,204 ไบต์ แล้วถอดออกมาเป็น JSON อ่านรู้เรื่องทั้งก้อน จบ ใช้เวลาไม่กี่นาที ไม่ต้องรู้อัลกอริทึม ไม่ต้องเปิดซอร์ส ไม่ต้องมีกุญแจ
+
+### เส้นทางที่ 2: แกะ binary ที่เขาบอกว่าเป็น "Black-Box"
+
+commit หนึ่งของเขาชื่อ [`dcd51b7`](https://github.com/bangsaenai/bangsaen-hospital-active-defense/commit/dcd51b73930cc0e658850961a4c97b761b0b0a6d) — *"hide C-source files and enforce black-box binary arena mode"* เขาปิดซอร์ส C แล้วประกาศว่าตอนนี้เป็น "โหมด black-box แกะไม่ได้"
+
+binary ไม่ใช่ black-box มันคือคำอธิบายอัลกอริทึมในอีกภาษาหนึ่ง แกะ `active_defense_v27.pyd` แล้วสองบรรทัดนี้โผล่มาตรงๆ ในโค้ดเครื่อง:
+
+```asm
+imull  $0x11, %ecx, %edx    ; ecx (ตำแหน่งไบต์ i) × 0x11 (= 17)
+addb   $0x5a, %dl           ; + 0x5A
 ```
 
-🥊 How to Challenge the Arena
-1. Authorized Auditor Extraction (Normal Access)
-Run the extraction script with the Master Key set in environment variables:
+นั่นคือ `i * 17 + 0x5A` เขียนด้วยภาษาแอสเซมบลี วางเรียงติดกันสองคำสั่ง ค่าคงที่ทั้งสอง (17 กับ 0x5A) อยู่ในนั้นให้อ่านได้ทันที "การปิดซอร์ส" ไม่ได้ซ่อนอะไรเลย เพราะ compiler แปลสูตรเดิมออกมาให้อ่านได้อยู่ดี นี่คือวิธีเดียวกับที่ใช้ยืนยัน EP.26 มาแล้ว — แกะ `.pyd` เทียบกับสมการ ตรงกันทุกคำสั่ง
+
+**ทั้งสองเส้นทางไม่ต้องพึ่งอะไรที่หลุดมาโดยบังเอิญเลย** ต่อให้เขาปิดซอร์สอย่างมิดชิดตั้งแต่วันแรก ระบบนี้ก็ยังถอดได้จากไฟล์ที่เขาต้องแจกอยู่ดี เพราะปัญหาไม่ได้อยู่ที่ "เขาเผลอทำหลุด" แต่อยู่ที่ "ระบบนี้ไม่มีความลับตั้งแต่ออกแบบ"
+
+## แล้ว "GCP Cloud KMS ที่เปลี่ยนกุญแจทุก 60 วินาที" ล่ะ?
+
+นี่คือส่วนที่เขาโฆษณาว่าล้ำที่สุด และเป็นส่วนที่ตลกที่สุด
+
+ในตัวถอดรหัสจริง (ที่เราแกะออกมาในเส้นทางที่ 2) การ XOR ใช้ `i*17 + 0x5A` **เท่านั้น** ไม่มีจุดไหนเลยที่เอาค่าอะไรจากคลาวด์มาใช้ถอดรหัส การติดต่อ GCP Cloud Run เป็นแค่ด่านที่เช็กว่า *"เซิร์ฟเวอร์ตอบกลับ HTTP 200 ไหม"* ถ้าไม่ผ่านก็สั่งล้าง RAM แล้วคืนค่าว่าง ถ้าผ่านก็ไปถอดด้วยสูตรคงที่เดิม
+
+แปลว่า "กุญแจไดนามิก 256 บิต ที่เปลี่ยนทุก 60 วินาที" ที่คลาวด์อุตส่าห์คำนวณมา **ไม่เคยถูกเอาไปใช้ถอดรหัสสักไบต์เดียว** มันคือแม่กุญแจสวยหรูที่แขวนโชว์ไว้ ไม่ได้เสียบกับประตูบานไหน ด่านคลาวด์ทั้งด่านคือยามที่เช็กว่าประตูตอบรับ ไม่ใช่ยามที่ถือลูกกุญแจ ตั้ง server เปล่าที่ตอบ 200 ก็ผ่านด่านได้
+
+## ตอบโพสต์ Facebook ทีละข้อ
+
+เขาลิสต์ "Pain Point" 3 ข้อที่ EP.27 อ้างว่าแก้ได้เบ็ดเสร็จ
+
+> **1. Key Leakage — "แอบฝัง Token/Key ไว้ที่ Client สุดท้ายก็โดน Stealer Malware ดูดไป"**
+
+ปัญหานี้ไม่มีอยู่ในระบบของเขา เพราะระบบของเขา **ไม่มีกุญแจให้รั่วตั้งแต่แรก** การถอดรหัสไม่ต้องใช้ Token/Key อะไรเลย แค่รู้ว่าเป็น JSON ก็พอ เขากลัวขโมยงัดตู้เซฟ ทั้งที่ในตู้ไม่มีกลอน
+
+> **2. Memory Extraction — "ต่อให้ File Encryption แน่นแค่ไหน เวลาเปิดดูก็ต้อง Decrypt ลง Heap RAM โดน Memory Dump ก็หลุด"**
+
+ประเด็นนี้เขาพูดถูกในหลักการ แต่ EP.27 ไม่เกี่ยวกับ RAM เลย เพราะ "File Encryption" ของเขาคือ XOR กับเลขที่ขึ้นกับตำแหน่ง ไม่ต้อง dump RAM ไม่ต้อง hook process ไม่ต้องแม้แต่รันไฟล์ แค่อ่านก้อนข้อมูลในไฟล์ที่แจก แล้ว XOR กลับ เขาสร้างประตูกันงัดหน้าต่างไว้อย่างดี แต่ลืมว่ากำแพงทั้งด้านทำจากกระดาษ
+
+> **3. Traceability — "ข้อมูลหลุดไม่เคยรู้ว่าหลุดจาก Process ไหน เพราะ Audit Log เก็บแค่ชั้น Database"**
+
+audit log ที่ "ชั้น Binary Execution" จะจับอะไรได้ ในเมื่อการขโมยไม่ได้เกิดตอน execute binary การถอดรหัสเกิดบนเครื่องของผู้โจมตี ด้วยสคริปต์ของผู้โจมตี log ของเขาจะว่างเปล่าตลอดกาล เพราะไม่มีใครเข้าไปในระบบที่เขาเฝ้าอยู่
+
+แล้วสามข้อ "โซลูชัน" ที่เขาภูมิใจ:
+
+> **"ตอบโจทย์ PDPA & HIPAA 100% — พิสูจน์ได้ว่าข้อมูล VIP ไม่เคยถูกพักที่ Endpoint ในรูป Plaintext"**
+
+ข้อมูล VIP คนไข้ห่างจาก plaintext แค่ XOR หนึ่งครั้งด้วยสูตรที่แกะออกจากไฟล์ของเขาได้ในไม่กี่นาที "ไม่เก็บ plaintext" แต่เก็บสิ่งที่แปลงกลับเป็น plaintext ได้โดยไม่ต้องมีกุญแจ ในทางกฎหมายมันคือ plaintext ที่ใส่แว่นกันแดด ฝ่าย Legal กับ CISO ที่เขาบอกว่า "จะชอบมาก" ถ้าเข้าใจเรื่องนี้จริง คงไม่ปรบมือ
+
+> **"เปลี่ยนบทบาท SI เป็น Gatekeeper คุม GCP KMS"**
+
+Gatekeeper ที่ KMS ไม่ได้ถือกุญแจ (ดูหัวข้อ Cloud KMS ข้างบน) ก็เป็นแค่คนเฝ้าประตูที่เปิดออกสู่ลานโล่ง
+
+> **"Self-Destruct คือ Insurance Policy — ล้าง RAM ใน < 0.12 ms คือ Safety Net ชั้นสุดท้าย"**
+
+การเผาสำเนาในมือให้ไวที่สุด ไม่ช่วยอะไร ถ้าต้นฉบับถอดได้จากไฟล์ที่แจกไปทั่วแล้ว เราไม่เคยเข้าใกล้ RAM ของเขา จะ shred เร็ว 0.12 ms หรือ 0.0001 ms ก็ป้องกันสิ่งที่ไม่ได้เกิดในหน่วยความจำไม่ได้
+
+## ไม่ใช่ครั้งแรก
+
+- **EP.25** ([`bangsaen-koopman-sovereign-engine`](https://github.com/bangsaenai/bangsaen-koopman-sovereign-engine)): โฆษณา "8D Koopman Subspace & 256-bit Kernel Hash" ข้างในคือ **รหัสซีซาร์** อายุสองพันปี รหัส 256 แบบ
+- **EP.26** ([`bangsaen-nonlinear-chaotic-engine`](https://github.com/bangsaenai/bangsaen-nonlinear-chaotic-engine)): "ต้าน AI + Ghidra" รหัส 16.7 ล้านแบบ ไล่ครบใน 40 วินาที
+- **EP.27** (ตอนนี้): "Sovereign Active Defense + Cloud KMS + Memory Shredder" กุญแจ **0 บิต** ถอดได้จากไฟล์ binary ที่เขาแจก
+
+กราฟความปลอดภัยไม่ได้ขึ้น มันดิ่งลง สิ่งเดียวที่เพิ่มขึ้นเรื่อยๆ คือความยาวของคำโฆษณา "Sovereign", "Active Defense", "Null-Space Memory Shredder", "Enterprise-Grade" — ยิ่งคำหรู ข้างในยิ่งกลวง
+
+*(ปล. ภาคนี้เขายังเผลออัปซอร์ส C ทั้งชุดขึ้น GitHub ใน commit แรกด้วย เหมือน EP.22 และ EP.26 แต่เราไม่นับรวมในการเจาะครั้งนี้ เพราะอยากให้เห็นชัดว่า **ต่อให้ไม่มีของหลุดเลย ระบบนี้ก็ถอดได้จากไฟล์ที่ต้องแจกอยู่ดี** การหลุดของซอร์สเป็นแค่ของแถม ไม่ใช่สาเหตุ)*
+
+## คำแนะนำ (จริงจังหนึ่งย่อหน้า)
+
+ถ้าอยากเข้ารหัสข้อมูลคนไข้จริงๆ ใช้ AES-GCM หรือ ChaCha20-Poly1305 กับกุญแจสุ่ม 256 บิต เก็บกุญแจใน KMS จริง แล้ว **ใช้กุญแจนั้นถอดจริง** ไม่ใช่โยนทิ้งอ่านแค่ status 200 ทั้งหมดนี้มีให้ใช้ฟรีในทุกภาษา ผ่านการตรวจสอบจากนักเข้ารหัสทั้งโลกมาหลายสิบปี และเปิดเผยอัลกอริทึมได้เต็มที่โดยไม่กระทบความปลอดภัยเลย เพราะความปลอดภัยอยู่ที่กุญแจ ไม่ใช่ที่การปิดบัง
 
 
+## ลองพิสูจน์ด้วยตัวเอง
 
-```PowerShell
-$env:BANGSAEN_GCP_AUTH_BEARER="BSH_GCP_LIVE_TOKEN_2026"; python builder/audit_extractor.py 
-``` 
+```
+git clone https://github.com/bangsaenai/bangsaen-hospital-active-defense
+python solve_ep27.py
+```
 
-Expected Outcome: Successful extraction of VIP medical records and generation of a forensic JSON audit dump.
+สคริปต์อ่านก้อนข้อมูลที่เข้ารหัสจากไฟล์ `releases/active_defense_v27.pyd` ที่เขาแจก (เส้นทางที่ 1) สมมติแค่ว่าข้อมูลเป็น JSON แล้วให้ keystream โผล่มาจาก crib 6 ตัวอักษร ยืนยันว่ามันคือสูตร `+17` ที่ไม่มีกุญแจ จากนั้นถอดทั้งก้อนออกมาเป็น JSON คนไข้ VIP (2,204 ไบต์) — ไม่ต้องใช้ Windows, ไม่ต้องใช้ token, ไม่ต้องต่อ GCP, ไม่ต้องรัน `.pyd`, ไม่ต้องแตะซอร์สโค้ด, ไม่ต้องแข่งกับ Shredder ตัวไหน
 
-2. Unauthorized Adversary Attack (The Challenge)
-Run the probe without credentials:
 
-```PowerShell
-python tests/test_arena_probe.py
-``` 
+## ไฟล์ในนี้
 
-Expected Outcome: Complete memory annihilation (0x00) and immediate process exit.
-
-⚔️ The Real Hacker Challenge
-The goal of this arena is NOT to guess the key. We already gave it to you.
-
-Your Goal: Can you patch, memory-hook, bypass the C-Native WinHTTP telemetry, or freeze the RAM before the Thanos Shredder annihilates the context in < 0.12 ms?
-
-Good luck.
+- `solve_ep27.py`: สคริปต์ถอดรหัสจากไฟล์ `.pyd` ที่เขาแจก (ไม่ต้องใช้ซอร์ส/กุญแจ/network/Windows)
